@@ -55,19 +55,6 @@ function RunFile()
   -- Open a split terminal and run the command
   vim.cmd('split | terminal ' .. cmd)
 end
-local lspconfig = require 'lspconfig'
-
--- C++ (clangd)
-lspconfig.clangd.setup {}
-
--- Python (pyright)
-lspconfig.pyright.setup {}
-
--- HTML, CSS, JavaScript (vscode-html-language-server)
-lspconfig.html.setup {}
-lspconfig.cssls.setup {}
-lspconfig.tsserver.setup {}
-
 -- Enable break indent
 vim.opt.breakindent = true
 
