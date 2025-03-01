@@ -40,6 +40,8 @@ function RunFile()
   local filename = vim.fn.expand '%' -- Get the current filename
   local cmd = ''
 
+
+  
   if filetype == 'python' then
     cmd = 'python3 ' .. filename
   elseif filetype == 'cpp' then
