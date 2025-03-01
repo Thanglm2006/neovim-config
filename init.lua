@@ -45,7 +45,30 @@ require('mason-lspconfig').setup_handlers({
     })
   end,
 })
-
+require('nvim-tree').setup({
+    view = {
+      width = 30,
+      side = 'left',
+      mappings = {
+        list = {
+          { key = "<C-p>", action = "pick_window" },
+        },
+      },
+      -- Enable window picker
+      actions = {
+        open_file = {
+          window_picker = {
+            enable = true,
+            chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+            exclude = {
+              filetype = { "notify", "packer", "qf" },
+              buftype = { "terminal", "nofile" },
+            },
+          },
+        },
+      },
+    },
+  })
 -- nvim-cmp setup for auto-completion.
 local cmp = require('cmp')
 local luasnip = require('luasnip')
