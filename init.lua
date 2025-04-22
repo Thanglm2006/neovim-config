@@ -1,11 +1,13 @@
-the leader key
+-- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
-
+vim.keymap.set("n", "<leader>gg", function()
+	vim.cmd("split | terminal lazygit")
+end, { noremap = true, silent = true })
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
@@ -35,7 +37,8 @@ vim.opt.showmode = false
 vim.schedule(function()
 	vim.opt.clipboard = "unnamedplus"
 end)
-vim.api.nvim_set_keymap("n", "<F5>", ":lua RunFile()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>l", ":lua RunFile()<CR>", { noremap = true, silent = true })
+vim.g.VM_maps = { ["Find Under"] = "<M-n>" } -- Use Alt+N
 
 function RunFile()
 	local filetype = vim.bo.filetype -- Get the file type (cpp, python, etc.)
@@ -87,6 +90,11 @@ vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = "split"
+vim.filetype.add({
+	extension = {
+		ejs = "html",
+	},
+})
 
 -- Show which line your cursor is on
 vim.opt.cursorline = true
@@ -149,6 +157,9 @@ vim.api.nvim_create_autocmd({ "TextChanged", "InsertLeave" }, {
 	pattern = "*",
 	command = "silent! write",
 })
+vim.opt.tabstop = 4 -- Number of spaces a <Tab> counts for
+vim.opt.shiftwidth = 4 -- Number of spaces to use for autoindent
+vim.opt.expandtab = true -- Convert tabs to spaces
 
 vim.o.guifont = "JetBrainsMono Nerd Font:h12"
 
@@ -179,14 +190,32 @@ vim.opt.rtp:prepend(lazypath)
 
 -- NOTE: Here is where you install your plugins.
 -- Ensure LuaSnip is installed before loading snippets
-local status_ok, luasnip = pcall(require, "luasnip")
-if status_ok then
-	require("luasnip.loaders.from_vscode").lazy_load({
-		paths = { vim.fn.expand("~/.config/nvim/snippets") },
-	})
-else
-	print("LuaSnip is not installed!")
+-- LuaSnip setup:
+local ok_luasnip, luasnip = pcall(require, "luasnip")
+if not ok_luasnip then
+	vim.notify("LuaSnip is not installed!", vim.log.levels.ERROR)
+	return
 end
+
+-- By default, load snippet files from ~/.config/nvim/snippets (Lua files).
+-- Make sure your snippet files are named something.lua inside that folder.
+-- Example snippet path: ~/.config/nvim/snippets/html.lua
+local lua_loader_ok, lua_loader = pcall(require, "luasnip.loaders.from_lua")
+if lua_loader_ok then
+	lua_loader.lazy_load({
+		-- This path can be adapted if your Neovim config directory differs.
+		paths = { vim.fn.stdpath("config") .. "/snippets" },
+	})
+end
+
+-- If using VSCode-style JSON snippets in ~/.config/nvim/snippets, enable from_vscode loader:
+local vscode_loader_ok, vscode_loader = pcall(require, "luasnip.loaders.from_vscode")
+if vscode_loader_ok then
+	vscode_loader.lazy_load({
+		paths = { vim.fn.stdpath("config") .. "/snippets" },
+	})
+end
+
 vim.g.VM_maps = {
 	["Find Under"] = "<C-d>", -- Select next occurrence (like VS Code)
 	["Find Subword Under"] = "<C-d>", -- Select next occurrence (for subwords)
@@ -213,6 +242,23 @@ require("lazy").setup({
 	"maxmellon/vim-jsx-pretty",
 	"yuezk/vim-js",
 	"jackguo380/vim-lsp-cxx-highlight",
+	{
+		"ziontee113/color-picker.nvim",
+		config = function()
+			require("color-picker").setup()
+		end,
+	},
+	"tpope/vim-dadbod",
+	dependencies = {
+		"kristijanhusak/vim-dadbod-ui", -- Optional UI
+		"kristijanhusak/vim-dadbod-completion", -- SQL auto-completion
+	},
+	{
+		"norcalli/nvim-colorizer.lua",
+		config = function()
+			require("colorizer").setup()
+		end,
+	},
 	{
 		"mg979/vim-visual-multi",
 		branch = "master",
@@ -454,6 +500,9 @@ require("lazy").setup({
 				update_focused_file = {
 					enable = true,
 					update_root = true, -- Change root when changing directory
+				},
+				filters = {
+					dotfiles = false, -- set to true to hide dotfiles
 				},
 			})
 
@@ -899,15 +948,31 @@ require("lazy").setup({
 					-- Accept ([y]es) the completion.
 					--  This will auto-import if your LSP supports it.
 					--  This will expand snippets if the LSP sent a snippet.
-					["<Tab>"] = cmp.mapping.select_next_item(),
-					["<S-Tab>"] = cmp.mapping.select_prev_item(),
+					["<Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_next_item()
+						elseif luasnip.expand_or_jumpable() then
+							luasnip.expand_or_jump()
+						else
+							fallback() -- If no completion, insert a normal Tab
+						end
+					end, { "i", "s" }),
+
+					["<S-Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_prev_item()
+						elseif luasnip.jumpable(-1) then
+							luasnip.jump(-1)
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
+
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
 
 					-- If you prefer more traditional completion keymaps,
 					-- you can uncomment the following lines
 					--['<CR>'] = cmp.mapping.confirm { select = true },
-					--['<Tab>'] = cmp.mapping.select_next_item(),
-					--['<S-Tab>'] = cmp.mapping.select_prev_item(),
 
 					-- Manually trigger a completion from nvim-cmp.
 					--  Generally you don't need this, because nvim-cmp will display
