@@ -70,11 +70,15 @@ git clone https://github.com/Thanglm2006/neovim-config.git "$env:LOCALAPPDATA\nv
 #### Arch Linux
 ```bash
 sudo pacman -S nerd-fonts nodejs npm unzip zip sxiv imagemagick
+sudo npm install -g tree-sitter-cli
+
 ```
 
 #### Fedora
 ```bash
 sudo dnf install nodejs npm unzip zip sxiv ImageMagick
+sudo npm install -g tree-sitter-cli
+
 ```
 
 ## 🚀 Post Installation
