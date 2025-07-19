@@ -22,3 +22,10 @@ require 'custom.keymaps.copilot'
 require 'custom.keymaps.undotree'
 -- require 'custom.keymaps.markdown'
 require 'custom.keymaps.flutter'
+-- Map <C-n> to toggle nvim-tree in normal mode
+vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true, desc = 'Toggle NvimTree' })
+-- Ensure arrow keys work for navigation in normal mode
+vim.keymap.set('n', '<Up>', 'k', { noremap = true, silent = true, desc = 'Move up' })
+vim.keymap.set('n', '<Down>', 'j', { noremap = true, silent = true, desc = 'Move down' })
+vim.keymap.set('n', '<Left>', 'h', { noremap = true, silent = true, desc = 'Move left' })
+vim.keymap.set('n', '<Right>', 'l', { noremap = true, silent = true, desc = 'Move right' })
