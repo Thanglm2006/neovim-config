@@ -1,125 +1,129 @@
 <h1 align="center">
   <br>
-  <a href=""><img src="/images/neovim.png" alt="Neovim" width="150"></a>
+  <img src="/images/neovim.png" alt="Neovim" width="150">
   <br>
-	Neovim config
+  Neovim Config
   <br>
 </h1>
 
-<h4 align="center">Neovim config by anvnh</h4>
+<h4 align="center">Neovim configuration by <a href="https://github.com/Thanglm2006">Thanglm2006</a></h4>
 
 <p align="center">
   • <a href="#installation"> Installation </a> •
-  <a href="#post-installation"> Post installation </a> •
+  <a href="#post-installation"> Post Installation </a> •
   <a href="#faq"> FAQ </a> •
 </p>
 
-## Installation
-### Install Neovim:
-Make sure neovim version is >= 0.8.0, otherwise this configuration may not work.
+---
 
-### Dependencies:
-External Requirements:
-- Basic utils: `git`, `make`, `unzip`, C Compiler (`gcc`), tree-sister-cli for render latex (`sudo pacman -S tree-sitter-cli`)
-- ripgrep
-- Clipboard tool (xclip/xsel/win32yank or other depending on the platform)
-- Nerd fonts
-- - Language Setup:
-  - If you want to write Typescript, you need `npm`
-  - If you want to write Golang, you will need `go`
-  - etc...
->[!note]
-> On Fedora, you may need to install lua 5.1 in order to install and use luarock plugins (in /lua/custom/plugins/image.lua)
+## 📦 Installation
 
-```sh
+### ✅ Prerequisites
+
+Make sure your Neovim version is **≥ 0.8.0**.
+
+#### Required Packages
+
+- Basic tools: `git`, `make`, `unzip`, `gcc`
+- `ripgrep` (for search)
+- Clipboard tools: `xclip`, `xsel`, or `win32yank`
+- `tree-sitter-cli` (e.g., for LaTeX support):  
+  ```bash
+  sudo pacman -S tree-sitter-cli
+  ```
+- Nerd Fonts (required for icons)
+
+#### Fedora Note
+To use plugins that depend on LuaRocks (like image.lua), you may need:
+
+```bash
 sudo dnf install lua-5.1
 ```
 
-> **NOTE**
-> [Backup](#FAQ) your previous configuration (if any exists)
+### 🛑 Backup Old Config
+Back up and delete your existing Neovim config:
 
-Neovim's configurations are located under the following paths, depending on your OS:
-
-| OS | PATH |
-| :------------| :---------------------------------------- |
-| Linux, MacOS | `$XDG_CONFIG_HOME/nvim`, `~/.config/nvim` |
-| Windows (cmd)| `%localappdata%\nvim\` |
-| Windows (powershell)| `$env:LOCALAPPDATA\nvim\` |
-
-### Install config
-#### Clone this repository
-> **NOTE**
-> If following the recommended step above (i.e., forking the repo), replace
-> `nvim-lua` with `<your_github_username>` in the commands below
-
-<details><summary> Linux and Mac </summary>
-
-```sh
-git clone https://github.com/anvnh/neovim-config.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
+```bash
+mv ~/.config/nvim ~/.config/nvim_backup
+rm -rf ~/.local/share/nvim/
 ```
 
-</details>
+### 🔧 Clone This Repo
 
-<details><summary> Windows </summary>
-
-If you're using `cmd.exe`:
-
-```
-git clone https://github.com/anvnh/neovim-config.git "%localappdata%\nvim"
+#### Linux / macOS
+```bash
+git clone https://github.com/Thanglm2006/neovim-config.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
 ```
 
-If you're using `powershell.exe`
-
-```
-git clone https://github.com/anvnh/neovim-config.git "${env:LOCALAPPDATA}\nvim"
-```
-
-</details>
-
-#### Requires dependencies: 
-- [*] [Arch Linux]
-```sh
-sudo pacman -S $(pacman -Sgq nerd-fonts) && sudo pacman -S $(pacman -Sgq nodejs) && sudo pacman -S npm && sudo pacman -S unzip zip sxiv imagemagick
+#### Windows (CMD)
+```cmd
+git clone https://github.com/Thanglm2006/neovim-config.git %LOCALAPPDATA%\nvim
 ```
 
-- [*] [Fedora]
-You can install required nerd-fonts using [getnf](https://github.com/getnf/getnf)
-```sh
-sudo dnf install nodejs npm unzip zip sxiv ImageMagick 
+#### Windows (PowerShell)
+```powershell
+git clone https://github.com/Thanglm2006/neovim-config.git "$env:LOCALAPPDATA\nvim"
 ```
 
-## Post installation
+### 📚 Install Extra Dependencies
 
-Start Neovim inside any terminal emulator (e.g., `gnome-terminal`, `konsole`, `kitty`, etc.)
-
-```sh
-nvim
+#### Arch Linux
+```bash
+sudo pacman -S nerd-fonts nodejs npm unzip zip sxiv imagemagick
 ```
-That's it! Lazy will install all the plugins you have. Use `:Lazy` to view
-the current plugin status. Hit `q` to close the window.
 
-## FAQ
+#### Fedora
+```bash
+sudo dnf install nodejs npm unzip zip sxiv ImageMagick
+```
 
-* What should I do if I already have a pre-existing Neovim configuration?
-  * You should back it up and then delete all associated files.
-  * This includes your existing init.lua and the Neovim files in `~/.local`
-    which can be deleted with `rm -rf ~/.local/share/nvim/`
-* Can I keep my existing configuration in parallel to this config?
-  * Yes! You can use [NVIM_APPNAME](https://neovim.io/doc/user/starting.html#%24NVIM_APPNAME)`=nvim-NAME`
-    to maintain multiple configurations. For example, you can install the kickstart
-    configuration in `~/.config/nvim-config1` and create an alias:
-    ```
-    alias nvim-kickstart='NVIM_APPNAME="nvim-config1" nvim'
-    ```
-    When you run Neovim using `nvim-config1` alias it will use the alternative
-    config directory and the matching local directory
-    `~/.local/share/nvim-config1`. You can apply this approach to any Neovim
-    distribution that you would like to try out.
-* What if I want to "uninstall" this configuration:
-  * See [lazy.nvim uninstall](https://lazy.folke.io/usage#-uninstalling) information
+## 🚀 Post Installation
 
-## License
+1. Launch Neovim:
+   ```bash
+   nvim
+   ```
 
-MIT
+2. It will automatically install all plugins via lazy.nvim.
+
+3. Use `:Lazy` to view plugin status. Press `q` to close the window.
+
+## ❓ FAQ
+
+### I already have a Neovim config. What should I do?
+Back it up and remove:
+
+```bash
+mv ~/.config/nvim ~/.config/nvim_backup
+rm -rf ~/.local/share/nvim/
+```
+
+### Can I keep multiple configs?
+Yes! Use `NVIM_APPNAME`:
+
+```bash
+alias nvim-thang='NVIM_APPNAME=nvim-thang nvim'
+```
+
+Place the config in `~/.config/nvim-thang`
+
+Neovim will use:
+- `~/.config/nvim-thang`
+- `~/.local/share/nvim-thang`
+
+### How do I uninstall this config?
+Just delete the following:
+
+```bash
+rm -rf ~/.config/nvim ~/.local/share/nvim ~/.local/state/nvim ~/.cache/nvim
+```
+
+Or follow official Lazy.nvim uninstall guide.
+
+## 📄 License
+
+MIT © Thanglm2006
 
 ---
+
+*Let me know if you'd like to include demo screenshots, gifs, or explain specific plugin features (e.g. `telescope`, `cmp`, `treesitter`, etc.)!*
